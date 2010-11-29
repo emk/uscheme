@@ -1,0 +1,38 @@
+Data Types
+
+  Fixnum
+  Float
+  Boolean
+
+Functions
+
+  +, -, *, /, mod
+  ==, !=, <, <=, >, >=
+  write
+  and or not
+
+Control constructs
+
+  define
+  if
+
+Primitives
+
+  fixnum?
+  float?
+  boolean?
+  fixnum->float
+
+;; Convert an arbitrary value to a fixnum, if possible, or raise an error.
+(define (->float x)
+  (if (float? x)
+    x
+    (if (fixnum? x)
+      (fixnum->float x)
+      (%type-error x))))
+
+(define (+ x y)
+  (if (and (fixnum? x) (fixnum? y))
+    (%fixnum+ x y)
+    (%float+ (->float x) (->float y))))
+
