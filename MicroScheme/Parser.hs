@@ -1,7 +1,7 @@
 -- |Parse MicroScheme source code into an 'Ast'.  This module requires
 -- some knowledge of Haskell and Parsec, and may be safely treated as a
 -- a black box if you're not interested in the details.
-module MicroScheme.Parser (parseSexp, parseSexps) where
+module MicroScheme.Parser (parseSexp, parseSexps, failOnParseError) where
 
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Language
@@ -85,3 +85,8 @@ parseSexp inputName str = parseSource sexp inputName str
 -- |Parse multiple s-expressions, such those at the top level of a file.
 parseSexps :: String -> String -> Either ParseError [Ast]
 parseSexps inputName str = parseSource (many sexp) inputName str
+
+-- |If a parse error has occurred, call 'fail' in the current monad.
+failOnParseError :: (Monad m) => Either ParseError a -> m a
+failOnParseError (Left err)  = fail (show err)
+failOnParseError (Right val) = return val

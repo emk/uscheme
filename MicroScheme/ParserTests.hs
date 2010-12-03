@@ -5,19 +5,12 @@ import Test.HUnit
 import MicroScheme.Value
 import MicroScheme.Parser
 
--- |Assert that we expect 'input' to parse as 'expected' using 'parser'.
-assertParseWith parser expected input =
-    case parser "<test case>" input of
-      Left parseError -> assertFailure (show parseError)
-      Right ast -> assertEqual description expected ast
-    where description = "parse of " ++ show input
+-- Assert that we expect 'input' to parse as 'expected' using 'parser'.
+assertParseWith parser expected input = do
+  actual <- failOnParseError (parser "<test case>" input)
+  assertEqual ("parsing " ++ show input) expected actual
 
--- |Assert that we expect 'input' to parse as 'expected'.
-assertParse expected input =
-    case parseSexp "<test case>" input of
-      Left parseError -> assertFailure (show parseError)
-      Right ast -> assertEqual description expected ast
-  where description = "parse of " ++ show input
+assertParse = assertParseWith parseSexp
 
 parseIntTest   = assertParse (Literal (IntValue 1))      " 1 "
 parseFloatTest = assertParse (Literal (FloatValue 2.5))  " 2.5 "
