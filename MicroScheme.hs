@@ -49,6 +49,7 @@ lexer = P.makeTokenParser schemeStyle
 -- Scheme-specific tokens based on 'lexer'.
 lexeme = P.lexeme lexer
 whiteSpace = P.whiteSpace lexer
+identifier = P.identifier lexer
 integerToken = lexeme (P.decimal lexer) -- Does not include lexeme? Weird.
 floatToken = P.float lexer
 boolToken = lexeme rawBool <?> "boolean"
@@ -73,8 +74,11 @@ listWithDelimiters begin end = do
 -- A regular Scheme list, or a Racket-style list with [].
 list = listWithDelimiters '(' ')' <|> listWithDelimiters '[' ']' <?> "list"
 
+-- A Scheme symbol.
+symbol = fmap Symbol identifier <?> "symbol"
+
 -- S-expressions.
-sexp = literal <|> list
+sexp = literal <|> list <|> symbol
 
 -- |Parse a Scheme expression into an 'Ast'.
 parseScheme :: String -> Either ParseError Ast
@@ -84,5 +88,3 @@ parseScheme str = parse parser "<input>" str
           ast <- sexp
           eof
           return ast
-
-

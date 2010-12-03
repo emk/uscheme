@@ -22,6 +22,8 @@ parseListTest = assertParse expected " ( 1 2.0 ) "
                             Literal (FloatValue 2.0)])
 parseBracketedListTest = assertParse (List []) "[]"
 
+parseSymbolTest = assertParse (Symbol "foo!") " foo! "
+
 tests = test [ "parseIntTest"   ~: parseIntTest
              , "parseFloatTest" ~: parseFloatTest
              , "parseTrueTest"  ~: parseTrueTest
@@ -29,6 +31,7 @@ tests = test [ "parseIntTest"   ~: parseIntTest
              , "parseEmptyListTest" ~: parseEmptyListTest
              , "parseListTest"  ~: parseListTest
              , "parseBracketedListTest" ~: parseBracketedListTest
+             , "parseSymbolTest" ~: parseSymbolTest
              ]
 
 main = runTestTT $ tests
