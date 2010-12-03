@@ -11,7 +11,7 @@
     (if (>= n 50)
       ;; We haven't escaped in 50 iterations, so assume we're in the set.
       #t
-      ;; Computer t = z*z+c.
+      ;; Compute t = z*z+c.
       (let [[tr (+ (- (* zr zr) (* zi zi)) cr)]
             [ti (+ (* 2 (* zr zi)) ci)]]
         ;; If the magnitude of t is greater than 2.0, it's not in the
