@@ -48,7 +48,7 @@ lexer = P.makeTokenParser schemeStyle
 
 -- Scheme-specific tokens based on 'lexer'.
 lexeme = P.lexeme lexer
-integerToken = P.decimal lexer
+integerToken = lexeme (P.decimal lexer) -- Does not include lexeme? Weird.
 floatToken = P.float lexer
 boolToken = lexeme rawBool <?> "boolean"
     where rawBool = do

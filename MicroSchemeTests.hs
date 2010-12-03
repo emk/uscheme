@@ -11,10 +11,10 @@ assertParse expected input =
       Right ast -> assertEqual description expected ast
   where description = "parse of " ++ show input
 
-parseIntTest   = assertParse (Literal (IntValue 1))      "1"
-parseFloatTest = assertParse (Literal (FloatValue 2.5))  "2.5"
-parseTrueTest  = assertParse (Literal (BoolValue True))  "#t"
-parseFalseTest = assertParse (Literal (BoolValue False)) "#f"
+parseIntTest   = assertParse (Literal (IntValue 1))      " 1 "
+parseFloatTest = assertParse (Literal (FloatValue 2.5))  " 2.5 "
+parseTrueTest  = assertParse (Literal (BoolValue True))  " #t "
+parseFalseTest = assertParse (Literal (BoolValue False)) " #f "
 
 tests = test [ "parseIntTest"   ~: parseIntTest
              , "parseFloatTest" ~: parseFloatTest
