@@ -1,4 +1,4 @@
-default: check
+default: uscheme check
 
 LIBRARY_SOURCES = \
 	MicroScheme/Value.hs \
@@ -10,6 +10,9 @@ TESTS = \
 
 check: MicroSchemeTests
 	./MicroSchemeTests
+
+uscheme: $(LIBRARY_SOURCES) uscheme.hs
+	ghc --make $@
 
 MicroSchemeTests: $(LIBRARY_SOURCES) $(TESTS)
 	ghc --make $@

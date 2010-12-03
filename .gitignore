@@ -2,4 +2,5 @@
 *.s
 *.o
 *.hi
-*Tests
+/MicroSchemeTests
+/uscheme
