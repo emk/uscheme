@@ -2,6 +2,8 @@ module Main where
 
 import Test.HUnit
 
+import MicroScheme.EvalTests
 import MicroScheme.ParserTests
 
-main = runTestTT parserTests
+tests = test [parserTests, evalTests]
+main = runTestTT tests
