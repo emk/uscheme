@@ -14,9 +14,12 @@ evalIntTest = assertEval (IntValue 10) "10"
 evalFloatTest = assertEval (FloatValue 2.0) "2.0"
 evalBoolTest = assertEval (BoolValue True) "#t"
 
+evalPlusIntIntTest = assertEval (IntValue 3) "(+ 1 2)"
+
 evalTests =
     test [ "evalIntTest" ~: evalIntTest
          , "evalFloatTest" ~: evalFloatTest
          , "evalBoolTest" ~: evalBoolTest
+         , "evalPlusIntIntTest" ~: evalPlusIntIntTest
          ]
 
