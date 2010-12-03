@@ -10,11 +10,13 @@ import qualified Text.ParserCombinators.Parsec.Token as P
 
 import MicroScheme.Value
 
--- Legal identifier start characters in Scheme.
-schemeIdentStart = letter <|> oneOf "!$%&*/:<=>?^_~"
+-- Legal identifier start characters in Scheme, plus "+-@", which have
+-- been moved from 'schemeIdentLetter' for simplicity and compatibility
+-- with PLT.
+schemeIdentStart = letter <|> oneOf "!$%&*/:<=>?^_~+-@"
 
 -- Legal identifier characters in Scheme.
-schemeIdentLetter = schemeIdentStart <|> digit <|> oneOf "+-.@"
+schemeIdentLetter = schemeIdentStart <|> digit <|> char '.'
 
 -- Syntactic properties of the Scheme language.
 schemeStyle =
