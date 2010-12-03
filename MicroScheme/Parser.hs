@@ -1,7 +1,7 @@
 -- |Parse MicroScheme source code into an 'Ast'.  This module requires
 -- some knowledge of Haskell and Parsec, and may be safely treated as a
 -- a black box if you're not interested in the details.
-module MicroScheme.Parser (parseScheme) where
+module MicroScheme.Parser (parseSexp, parseSexps) where
 
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Language
@@ -70,11 +70,18 @@ symbol = fmap Symbol identifier <?> "symbol"
 -- S-expressions.
 sexp = literal <|> list <|> symbol
 
+-- Parse source 'input' using 'parser'.
+parseSource parser inputName input = parse wrappedParser inputName input
+    where wrappedParser = do
+            whiteSpace
+            result <- parser
+            eof
+            return result
+
 -- |Parse a Scheme expression into an 'Ast'.
-parseScheme :: String -> Either ParseError Ast
-parseScheme str = parse parser "<input>" str
-  where parser = do
-          whiteSpace
-          ast <- sexp
-          eof
-          return ast
+parseSexp :: String -> String -> Either ParseError Ast
+parseSexp inputName str = parseSource sexp inputName str
+
+-- |Parse multiple s-expressions, such those at the top level of a file.
+parseSexps :: String -> String -> Either ParseError [Ast]
+parseSexps inputName str = parseSource (many sexp) inputName str

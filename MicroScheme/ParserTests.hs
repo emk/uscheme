@@ -5,9 +5,16 @@ import Test.HUnit
 import MicroScheme.Value
 import MicroScheme.Parser
 
+-- |Assert that we expect 'input' to parse as 'expected' using 'parser'.
+assertParseWith parser expected input =
+    case parser "<test case>" input of
+      Left parseError -> assertFailure (show parseError)
+      Right ast -> assertEqual description expected ast
+    where description = "parse of " ++ show input
+
 -- |Assert that we expect 'input' to parse as 'expected'.
 assertParse expected input =
-    case parseScheme input of
+    case parseSexp "<test case>" input of
       Left parseError -> assertFailure (show parseError)
       Right ast -> assertEqual description expected ast
   where description = "parse of " ++ show input
@@ -25,6 +32,8 @@ parseBracketedListTest = assertParse (List []) "[]"
 
 parseSymbolTest = assertParse (Symbol "foo!") " foo! "
 
+parseTopLevel = assertParseWith parseSexps [List [], List []] " () () "
+
 parserTests =
     test [ "parseIntTest"   ~: parseIntTest
          , "parseFloatTest" ~: parseFloatTest
@@ -34,5 +43,6 @@ parserTests =
          , "parseListTest"  ~: parseListTest
          , "parseBracketedListTest" ~: parseBracketedListTest
          , "parseSymbolTest" ~: parseSymbolTest
+         , "parseTopLevel"  ~: parseTopLevel
          ]
 
