@@ -48,6 +48,7 @@ lexer = P.makeTokenParser schemeStyle
 
 -- Scheme-specific tokens based on 'lexer'.
 lexeme = P.lexeme lexer
+whiteSpace = P.whiteSpace lexer
 integerToken = lexeme (P.decimal lexer) -- Does not include lexeme? Weird.
 floatToken = P.float lexer
 boolToken = lexeme rawBool <?> "boolean"
@@ -56,17 +57,31 @@ boolToken = lexeme rawBool <?> "boolean"
             l <- oneOf "tf"
             return $ l == 't'
 
+-- Literal values.
 int = fmap IntValue integerToken
 float = fmap FloatValue floatToken
 bool = fmap BoolValue boolToken
-
 literal = fmap Literal $ try float <|> int <|> bool
+
+-- Parse a Scheme list with the specified delimiters.
+listWithDelimiters begin end = do
+  lexeme (char begin)
+  asts <- many sexp
+  lexeme (char end)
+  return $ List asts
+
+-- A regular Scheme list, or a Racket-style list with [].
+list = listWithDelimiters '(' ')' <|> listWithDelimiters '[' ']' <?> "list"
+
+-- S-expressions.
+sexp = literal <|> list
 
 -- |Parse a Scheme expression into an 'Ast'.
 parseScheme :: String -> Either ParseError Ast
 parseScheme str = parse parser "<input>" str
   where parser = do
-          ast <- literal
+          whiteSpace
+          ast <- sexp
           eof
           return ast
 
