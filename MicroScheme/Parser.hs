@@ -1,26 +1,14 @@
-module MicroScheme
-    (Value(IntValue, FloatValue, BoolValue),
-     Ast(Literal, List, Symbol),
-     parseScheme) where
+-- |Parse MicroScheme source code into an 'Ast'.  This module requires
+-- some knowledge of Haskell and Parsec, and may be safely treated as a
+-- a black box if you're not interested in the details.
+module MicroScheme.Parser (parseScheme) where
 
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Language
 import Text.ParserCombinators.Parsec.Prim
 import qualified Text.ParserCombinators.Parsec.Token as P
 
--- |Our MicroScheme dialect supports only 3 data types.  Note that unlike
--- a traditional Scheme, MicroScheme can't represent parsed source code
--- as literal data.
-data Value = IntValue Integer
-           | FloatValue Double
-           | BoolValue Bool
-  deriving (Eq, Show)
-
--- |A node in the abstract syntax tree of MicroScheme source.
-data Ast = Literal Value
-         | List [Ast]
-         | Symbol String
-  deriving (Eq, Show)
+import MicroScheme.Value
 
 -- Legal identifier start characters in Scheme.
 schemeIdentStart = letter <|> oneOf "!$%&*/:<=>?^_~"
