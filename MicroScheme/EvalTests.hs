@@ -2,13 +2,14 @@ module MicroScheme.EvalTests (evalTests) where
 
 import Test.HUnit
 
+import MicroScheme.Ast
 import MicroScheme.Eval
 import MicroScheme.Parser
 import MicroScheme.Value
 
 assertEval expected input = do
   sexp <- failOnParseError (parseSexp "<test case>" input)
-  actual <- eval sexp
+  actual <- evalInDefaultEnv (buildAst sexp)
   assertEqual ("evaluating " ++ show input) expected actual
 
 evalIntTest = assertEval (IntValue 10) "10"

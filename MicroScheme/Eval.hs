@@ -1,7 +1,8 @@
-module MicroScheme.Eval (eval) where
+module MicroScheme.Eval (evalInDefaultEnv) where
 
 import qualified Data.Map as M
 
+import MicroScheme.Ast
 import MicroScheme.Value
 
 type Environment = M.Map String Value
@@ -15,18 +16,9 @@ envInsertMany :: [(String, Value)] -> Environment -> Environment
 envInsertMany [] env = env
 envInsertMany ((s,v):svs) env = envInsertMany svs (M.insert s v env)
 
-evalBody env (expr:[]) = evalExpr env expr
-evalBody env (expr:exprs) = do
-  evalExpr env expr
-  evalBody env exprs
-
-evalBinding env (List ((Symbol name):expr:[])) = do
-  value <- evalExpr env expr
+evalBinding env (name,ast) = do
+  value <- eval env ast
   return (name, value)
-
-evalLet env bindings body = do
-  bindings' <- mapM (evalBinding env) bindings
-  evalBody (envInsertMany bindings' env) body
 
 -- Evaluate a binary arithmetic operation, promoting our arguments so that
 -- the types match.
@@ -49,19 +41,30 @@ primCall name args =
   error ("Don't know how to call " ++ name ++ " with " ++ show args)
 
 -- Evaluate a Scheme expression in 'env'.
-evalExpr :: Environment -> Sexp -> IO Value
-evalExpr env (RuntimeValue value) = return value
-evalExpr env (List ((Symbol "let"):(List bindings):body)) = do
-  evalLet env bindings body
-evalExpr env (List ((Symbol name):args)) = do
-  args' <- mapM (evalExpr env) args
-  primCall name args'
-evalExpr env (Symbol name) =
+eval :: Environment -> Ast -> IO Value
+
+eval env (Literal value) = return value
+
+eval env (Var name) = 
     case envLookup name env of
       Just val -> return val
       Nothing  -> error ("Unbound variable: " ++ name)
-evalExpr env sexp = error ("Don't know how to eval " ++ show sexp)
 
--- |Evaluate a Scheme expression.
-eval :: Sexp -> IO Value
-eval sexp = evalExpr defaultEnv sexp
+eval env (Primitive name args) = do
+  args' <- mapM (eval env) args
+  primCall name args'
+
+eval env (Let bindings body) = do
+  bindings' <- mapM (evalBinding env) bindings
+  eval (envInsertMany bindings' env) body
+
+eval env (Body (expr:[])) = eval env expr
+eval env (Body (expr:exprs)) = do
+  eval env expr
+  eval env (Body exprs)
+
+eval env ast = error ("Don't know how to eval " ++ show ast)
+
+-- |Evaluate a Scheme expression in the default environment.
+evalInDefaultEnv :: Ast -> IO Value
+evalInDefaultEnv ast = eval defaultEnv ast
