@@ -20,6 +20,8 @@ evalPlusIntFloatTest = assertEval (FloatValue 3.0) "(+ 1 2.0)"
 evalPlusFloatIntTest = assertEval (FloatValue 3.0) "(+ 1.0 2)"
 evalPlusFloatFloatTest = assertEval (FloatValue 3.0) "(+ 1.0 2.0)"
 
+evalLetTest = assertEval (IntValue 2) "(let [[x 1]] (+ x x))"
+
 evalTests =
     test [ "evalIntTest" ~: evalIntTest
          , "evalFloatTest" ~: evalFloatTest
@@ -28,5 +30,6 @@ evalTests =
          , "evalPlusIntFloatTest" ~: evalPlusIntFloatTest
          , "evalPlusFloatIntTest" ~: evalPlusFloatIntTest
          , "evalPlusFloatFloatTest" ~: evalPlusFloatFloatTest
+         , "evalLetTest" ~: evalLetTest
          ]
 

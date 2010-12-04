@@ -2,6 +2,14 @@ module MicroScheme.Eval (eval) where
 
 import MicroScheme.Value
 
+evalBody (expr:[]) = eval expr
+evalBody (expr:exprs) = do
+  eval expr
+  evalBody exprs
+
+evalLet bindings body = do
+  evalBody body
+
 -- Evaluate a binary arithmetic operation, promoting our arguments so that
 -- the types match.
 arithmeticBinOp :: String ->
@@ -25,7 +33,10 @@ evalCall name args =
 -- |Evaluate a Scheme expression.
 eval :: Ast -> IO Value
 eval (Literal value) = return value
+eval (List ((Symbol "let"):bindings:body)) = do
+  evalLet bindings body
 eval (List ((Symbol name):args)) = do
   args' <- mapM eval args
   evalCall name args'
+eval (Symbol name) = return (IntValue 1)
 eval ast = error ("Don't know how to eval " ++ show ast)
