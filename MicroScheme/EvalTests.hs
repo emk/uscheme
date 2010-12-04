@@ -7,8 +7,8 @@ import MicroScheme.Parser
 import MicroScheme.Value
 
 assertEval expected input = do
-  ast <- failOnParseError (parseSexp "<test case>" input)
-  actual <- eval ast
+  sexp <- failOnParseError (parseSexp "<test case>" input)
+  actual <- eval sexp
   assertEqual ("evaluating " ++ show input) expected actual
 
 evalIntTest = assertEval (IntValue 10) "10"

@@ -1,4 +1,4 @@
--- |Parse MicroScheme source code into an 'Ast'.  This module requires
+-- |Parse MicroScheme source code into an 'Sexp'.  This module requires
 -- some knowledge of Haskell and Parsec, and may be safely treated as a
 -- a black box if you're not interested in the details.
 module MicroScheme.Parser (parseSexp, parseSexps, failOnParseError) where
@@ -57,9 +57,9 @@ literal = fmap Literal $ try float <|> int <|> bool
 -- Parse a Scheme list with the specified delimiters.
 listWithDelimiters begin end = do
   lexeme (char begin)
-  asts <- many sexp
+  sexps <- many sexp
   lexeme (char end)
-  return $ List asts
+  return $ List sexps
 
 -- A regular Scheme list, or a Racket-style list with [].
 list = listWithDelimiters '(' ')' <|> listWithDelimiters '[' ']' <?> "list"
@@ -78,12 +78,12 @@ parseSource parser inputName input = parse wrappedParser inputName input
             eof
             return result
 
--- |Parse a Scheme expression into an 'Ast'.
-parseSexp :: String -> String -> Either ParseError Ast
+-- |Parse a Scheme expression into an 'Sexp'.
+parseSexp :: String -> String -> Either ParseError Sexp
 parseSexp inputName str = parseSource sexp inputName str
 
 -- |Parse multiple s-expressions, such those at the top level of a file.
-parseSexps :: String -> String -> Either ParseError [Ast]
+parseSexps :: String -> String -> Either ParseError [Sexp]
 parseSexps inputName str = parseSource (many sexp) inputName str
 
 -- |If a parse error has occurred, call 'fail' in the current monad.

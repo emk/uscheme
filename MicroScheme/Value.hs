@@ -1,8 +1,8 @@
--- |The heart of system: Scheme values, including compile-time 'Ast'
+-- |The heart of system: Scheme values, including compile-time 'Value'
 -- values that we don't try to implement in the runtime system.
 module MicroScheme.Value
     (Value(IntValue, FloatValue, BoolValue),
-     Ast(Literal, List, Symbol)) where
+     Sexp(Literal, List, Symbol)) where
 
 -- |Our MicroScheme dialect supports only 3 data types.  Note that unlike
 -- a traditional Scheme, MicroScheme can't represent parsed source code
@@ -12,10 +12,11 @@ data Value = IntValue Integer
            | BoolValue Bool
   deriving (Eq, Show)
 
--- |A node in the abstract syntax tree of MicroScheme source.  In a normal
--- Scheme, these would be moved into 'Value'.  But since none of these
--- types exist at runtime, we treat them specially.
-data Ast = Literal Value
-         | List [Ast]
+-- |A compile-time Scheme expression.  In a normal Scheme, lists, symbols
+-- and other data types would also exist at compile time.  But in
+-- MicroScheme, we're trying to keep the number of runtime types very
+-- small for the sake of implementation simplicity.
+data Sexp = Literal Value
+         | List [Sexp]
          | Symbol String
   deriving (Eq, Show)

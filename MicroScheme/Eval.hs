@@ -49,7 +49,7 @@ primCall name args =
   error ("Don't know how to call " ++ name ++ " with " ++ show args)
 
 -- Evaluate a Scheme expression in 'env'.
-evalExpr :: Environment -> Ast -> IO Value
+evalExpr :: Environment -> Sexp -> IO Value
 evalExpr env (Literal value) = return value
 evalExpr env (List ((Symbol "let"):(List bindings):body)) = do
   evalLet env bindings body
@@ -60,8 +60,8 @@ evalExpr env (Symbol name) =
     case envLookup name env of
       Just val -> return val
       Nothing  -> error ("Unbound variable: " ++ name)
-evalExpr env ast = error ("Don't know how to eval " ++ show ast)
+evalExpr env sexp = error ("Don't know how to eval " ++ show sexp)
 
 -- |Evaluate a Scheme expression.
-eval :: Ast -> IO Value
-eval ast = evalExpr defaultEnv ast
+eval :: Sexp -> IO Value
+eval sexp = evalExpr defaultEnv sexp
