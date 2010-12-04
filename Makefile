@@ -4,12 +4,14 @@ LIBRARY_SOURCES = \
 	MicroScheme/Value.hs \
 	MicroScheme/Parser.hs \
 	MicroScheme/Ast.hs \
-	MicroScheme/Eval.hs
+	MicroScheme/Eval.hs \
+	MicroScheme/Jit.hs
 
 TESTS = \
 	MicroScheme/ParserTests.hs \
 	MicroScheme/AstTests.hs \
 	MicroScheme/EvalTests.hs \
+	MicroScheme/JitTests.hs \
 	MicroSchemeTests.hs
 
 check: MicroSchemeTests
