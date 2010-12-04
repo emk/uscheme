@@ -9,14 +9,24 @@ type Environment = M.Map String Value
 defaultEnv :: Environment
 defaultEnv = M.empty
 
+envLookup = M.lookup
+
+envInsertMany :: [(String, Value)] -> Environment -> Environment
+envInsertMany [] env = env
+envInsertMany ((s,v):svs) env = envInsertMany svs (M.insert s v env)
+
 evalBody env (expr:[]) = evalExpr env expr
 evalBody env (expr:exprs) = do
   evalExpr env expr
   evalBody env exprs
 
+evalBinding env (List ((Symbol name):expr:[])) = do
+  value <- evalExpr env expr
+  return (name, value)
+
 evalLet env bindings body = do
-  evalBody newEnv body
-    where newEnv = M.insert "x" (IntValue 1) env
+  bindings' <- mapM (evalBinding env) bindings
+  evalBody (envInsertMany bindings' env) body
 
 -- Evaluate a binary arithmetic operation, promoting our arguments so that
 -- the types match.
@@ -33,7 +43,7 @@ arithmeticBinOp name intOp floatOp x y = op x y
     op x y = error ("Don't know how to compute " ++ name ++ " " ++
                     show x ++ " " ++ show y)
 
--- Evaluate a function call.
+-- Evaluate a primitive function call.
 primCall "+" (x:y:[]) = return (arithmeticBinOp "+" (+) (+) x y)
 primCall name args =
   error ("Don't know how to call " ++ name ++ " with " ++ show args)
@@ -41,13 +51,13 @@ primCall name args =
 -- Evaluate a Scheme expression in 'env'.
 evalExpr :: Environment -> Ast -> IO Value
 evalExpr env (Literal value) = return value
-evalExpr env (List ((Symbol "let"):bindings:body)) = do
+evalExpr env (List ((Symbol "let"):(List bindings):body)) = do
   evalLet env bindings body
 evalExpr env (List ((Symbol name):args)) = do
   args' <- mapM (evalExpr env) args
   primCall name args'
 evalExpr env (Symbol name) =
-    case M.lookup name env of
+    case envLookup name env of
       Just val -> return val
       Nothing  -> error ("Unbound variable: " ++ name)
 evalExpr env ast = error ("Don't know how to eval " ++ show ast)
