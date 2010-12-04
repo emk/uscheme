@@ -48,11 +48,11 @@ boolToken = lexeme rawBool <?> "boolean"
             l <- oneOf "tf"
             return $ l == 't'
 
--- Literal values.
+-- Literal runtime values.
 int = fmap IntValue integerToken
 float = fmap FloatValue floatToken
 bool = fmap BoolValue boolToken
-literal = fmap Literal $ try float <|> int <|> bool
+runtimeValue = fmap RuntimeValue $ try float <|> int <|> bool
 
 -- Parse a Scheme list with the specified delimiters.
 listWithDelimiters begin end = do
@@ -68,7 +68,7 @@ list = listWithDelimiters '(' ')' <|> listWithDelimiters '[' ']' <?> "list"
 symbol = fmap Symbol identifier <?> "symbol"
 
 -- S-expressions.
-sexp = literal <|> list <|> symbol
+sexp = runtimeValue <|> list <|> symbol
 
 -- Parse source 'input' using 'parser'.
 parseSource parser inputName input = parse wrappedParser inputName input

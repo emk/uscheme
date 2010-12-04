@@ -50,7 +50,7 @@ primCall name args =
 
 -- Evaluate a Scheme expression in 'env'.
 evalExpr :: Environment -> Sexp -> IO Value
-evalExpr env (Literal value) = return value
+evalExpr env (RuntimeValue value) = return value
 evalExpr env (List ((Symbol "let"):(List bindings):body)) = do
   evalLet env bindings body
 evalExpr env (List ((Symbol name):args)) = do

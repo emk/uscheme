@@ -12,15 +12,15 @@ assertParseWith parser expected input = do
 
 assertParse = assertParseWith parseSexp
 
-parseIntTest   = assertParse (Literal (IntValue 1))      " 1 "
-parseFloatTest = assertParse (Literal (FloatValue 2.5))  " 2.5 "
-parseTrueTest  = assertParse (Literal (BoolValue True))  " #t "
-parseFalseTest = assertParse (Literal (BoolValue False)) " #f "
+parseIntTest   = assertParse (RuntimeValue (IntValue 1))      " 1 "
+parseFloatTest = assertParse (RuntimeValue (FloatValue 2.5))  " 2.5 "
+parseTrueTest  = assertParse (RuntimeValue (BoolValue True))  " #t "
+parseFalseTest = assertParse (RuntimeValue (BoolValue False)) " #f "
 
 parseEmptyListTest = assertParse (List []) " ( ) "
 parseListTest = assertParse expected " ( 1 2.0 ) "
-    where expected = (List [Literal (IntValue 1),
-                            Literal (FloatValue 2.0)])
+    where expected = (List [RuntimeValue (IntValue 1),
+                            RuntimeValue (FloatValue 2.0)])
 parseBracketedListTest = assertParse (List []) "[]"
 
 parseSymbolTest = assertParse (Symbol "foo!") " foo! "

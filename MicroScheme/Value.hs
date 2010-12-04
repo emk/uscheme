@@ -2,7 +2,7 @@
 -- values that we don't try to implement in the runtime system.
 module MicroScheme.Value
     (Value(IntValue, FloatValue, BoolValue),
-     Sexp(Literal, List, Symbol)) where
+     Sexp(RuntimeValue, List, Symbol)) where
 
 -- |Our MicroScheme dialect supports only 3 data types.  Note that unlike
 -- a traditional Scheme, MicroScheme can't represent parsed source code
@@ -16,7 +16,7 @@ data Value = IntValue Integer
 -- and other data types would also exist at compile time.  But in
 -- MicroScheme, we're trying to keep the number of runtime types very
 -- small for the sake of implementation simplicity.
-data Sexp = Literal Value
-         | List [Sexp]
-         | Symbol String
+data Sexp = RuntimeValue Value
+          | List [Sexp]
+          | Symbol String
   deriving (Eq, Show)
