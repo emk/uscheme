@@ -14,8 +14,13 @@ astLiteralTest = assertAst (Literal (IntValue 1)) "1"
 astPrimitiveTest = assertAst (Primitive "+" [Literal (IntValue 1),
                                              Literal (IntValue 2)])
                              "(+ 1 2)"
+astLetTest = assertAst (Let [("x", Literal (IntValue 1))]
+                            (Body [Literal (IntValue 2),
+                                   Var "x"]))
+                       "(let [[x 1]] 2 x)"
 
 astTests =
     test [ "astLiteralTest" ~: astLiteralTest 
          , "astPrimitiveTest" ~: astPrimitiveTest
+         , "astLetTest" ~: astLetTest
          ]
