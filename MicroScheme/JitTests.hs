@@ -12,8 +12,10 @@ assertJit expected input = do
     actual <- jit (buildAst sexp)
     assertEqual ("jitting " ++ show input) expected actual
 
-jitIntTest = assertJit (IntValue 1) "1"
+jitInt1Test = assertJit (IntValue 1) "1"
+jitInt2Test = assertJit (IntValue 2) "2"
 
 jitTests =
-    test [ "jitIntTest" ~: jitIntTest
+    test [ "jitInt1Test" ~: jitInt1Test
+         , "jitInt2Test" ~: jitInt2Test
          ]

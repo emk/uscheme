@@ -8,13 +8,16 @@ import LLVM.ExecutionEngine
 import MicroScheme.Ast
 import MicroScheme.Value
 
-mReturn1 :: CodeGenModule (Function (IO Int32))
-mReturn1 =
+mReturnInt :: Int32 -> CodeGenModule (Function (IO Int32))
+mReturnInt i =
     createFunction ExternalLinkage $ do
-      ret (1::Int32)
+      ret i
 
 jit :: Ast -> IO Value
-jit ast = do
-  return1 <- simpleFunction mReturn1
-  value <- return1
+
+jit (Literal (IntValue i)) = do
+  code <- simpleFunction (mReturnInt (fromInteger i))
+  value <- code
   return (IntValue (toInteger value))
+
+jit ast = error ("Don't know how to JIT " ++ show ast)
