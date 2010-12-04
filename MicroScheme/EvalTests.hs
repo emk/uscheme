@@ -8,7 +8,8 @@ import MicroScheme.Value
 
 assertEval expected input = do
   ast <- failOnParseError (parseSexp "<test case>" input)
-  assertEqual ("evaluating " ++ show input) expected (eval ast)
+  actual <- eval ast
+  assertEqual ("evaluating " ++ show input) expected actual
 
 evalIntTest = assertEval (IntValue 10) "10"
 evalFloatTest = assertEval (FloatValue 2.0) "2.0"

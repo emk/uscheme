@@ -18,12 +18,14 @@ arithmeticBinOp name intOp floatOp x y = op x y
                     show x ++ " " ++ show y)
 
 -- Evaluate a function call.
-evalCall "+" (x:y:[]) = arithmeticBinOp "+" (+) (+) x y
+evalCall "+" (x:y:[]) = return (arithmeticBinOp "+" (+) (+) x y)
 evalCall name args =
   error ("Don't know how to call " ++ name ++ " with " ++ show args)
 
 -- |Evaluate a Scheme expression.
-eval :: Ast -> Value
-eval (Literal value) = value
-eval (List ((Symbol name):args)) = evalCall name (map eval args)
+eval :: Ast -> IO Value
+eval (Literal value) = return value
+eval (List ((Symbol name):args)) = do
+  args' <- mapM eval args
+  evalCall name args'
 eval ast = error ("Don't know how to eval " ++ show ast)
