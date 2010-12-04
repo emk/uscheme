@@ -11,7 +11,11 @@ assertAst expected input = do
   assertEqual ("building ast for " ++ show input) expected (buildAst sexp)
 
 astLiteralTest = assertAst (Literal (IntValue 1)) "1"
+astPrimitiveTest = assertAst (Primitive "+" [Literal (IntValue 1),
+                                             Literal (IntValue 2)])
+                             "(+ 1 2)"
 
 astTests =
     test [ "astLiteralTest" ~: astLiteralTest 
+         , "astPrimitiveTest" ~: astPrimitiveTest
          ]
