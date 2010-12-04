@@ -3,10 +3,12 @@ default: uscheme check
 LIBRARY_SOURCES = \
 	MicroScheme/Value.hs \
 	MicroScheme/Parser.hs \
+	MicroScheme/Ast.hs \
 	MicroScheme/Eval.hs
 
 TESTS = \
 	MicroScheme/ParserTests.hs \
+	MicroScheme/AstTests.hs \
 	MicroScheme/EvalTests.hs \
 	MicroSchemeTests.hs
 
